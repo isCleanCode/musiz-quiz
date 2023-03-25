@@ -97,24 +97,3 @@ function Song({
 
 export default Song;
 
-// const play = () => {
-//   setCountPlay((countPlay) => {
-//     return countPlay + 1;
-//   });
-// };
-
-// const sing = () => {
-//   setCountSing((countSing) => {
-//     return countSing + 1;
-//   });
-// };
-// const likes = () => {
-//   setCountLikes((countLikes) => {
-//     return countLikes + 1;
-//   });
-// };
-// const disLikes = () => {
-//   setCountDisLikes((countDisLikes) => {
-//     return countDisLikes + 1;
-//   });
-// };

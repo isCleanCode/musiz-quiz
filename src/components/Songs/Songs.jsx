@@ -1,12 +1,15 @@
-import { React, useState } from "react";
+import { React, useState, useCallback } from "react";
 import Song from "./Song";
 import { songs } from "../../data/data.js";
+import AddForm from "../AddForm/AddForm";
 
 function Songs() {
   const [state, setState] = useState({
     /* Берем данные с локального хранилища или берем из массива в data.js*/
     songsListArr: JSON.parse(localStorage.getItem("songsListArr")) || songs,
+    // showAddForm: false,
   });
+  const [showAddForm, setShowAddForm] = useState(false);
 
   /* Добавление количества лайков, дизлайков и кто будет петь, а кто будет играть  */
 
@@ -45,7 +48,7 @@ function Songs() {
       "songsListArr",
       JSON.stringify(temp)
     ); /*  Добавление данных в локальное хранилище */
-    
+
     /* Добавление количество лайков  */
   }
   function like(position) {
@@ -99,7 +102,20 @@ function Songs() {
     });
     localStorage.setItem("songsListArr", JSON.stringify(temp));
   };
+  /* Функция, которая меняет значение состояния state.showAddForm */
+ 
+  const handleShowAddForm = useCallback(() => {
+    console.log('working')
+    setShowAddForm({ showAddForm: true });
+  }, []);
+  const handleHideAddForm = useCallback(() => {
+    console.log('working hide')
+    setShowAddForm({ showAddForm: false });
+  }, []);
 
+
+
+    
   /* Методом map проходимся по массиву обьектов песен и выводим список */
 
   const songsList = state.songsListArr.map(
@@ -149,9 +165,20 @@ function Songs() {
   return (
     <div>
       <div className="songs flex justify-center flex-col items-center">
-        <h1 className="text-center animate-pulse text-white text-2xl p-4">
-          Cover event
-        </h1>
+        <div className=" border-b-4">
+          <h1 className="text-center   text-white text-2xl p-3 mt-1">
+            Cover event
+          </h1>
+        </div>
+
+        <button
+          onClick={handleShowAddForm}
+          className="px-2 py-1 my-4 mt-6 animate-pulse  w-2/5 bg-blue-400 lg:w-1/5 sm:w-1/4 rounded-lg shadow-lg hover:scale-105 ease-in-out duration-150 active:scale-90"
+        >
+          <p className=" font-medium"> Add song </p>
+        </button>
+
+        {showAddForm ? <AddForm handleHideAddForm = {() => handleHideAddForm()} /> : null}
         {songsList}
       </div>
     </div>
