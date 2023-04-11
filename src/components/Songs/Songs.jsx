@@ -1,13 +1,14 @@
-import { React, useState, useCallback } from "react";
+import { React, useEffect, useState } from "react";
 import Song from "./Song";
-import { songs } from "../../data/data.js";
+// import { songs } from "../../data/data.js";
 import AddForm from "../AddForm/AddForm";
+import axios /* , {isCancel, AxiosError} */ from "axios";
 
 function Songs() {
   const [state, setState] = useState({
     /* Берем данные с локального хранилища или берем из массива в data.js*/
-    songsListArr: JSON.parse(localStorage.getItem("songsListArr")) || songs,
-    // showAddForm: false,
+    // songsListArr: JSON.parse(localStorage.getItem("songsListArr")) || songs,
+    songsListArr: [],
   });
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -103,19 +104,27 @@ function Songs() {
     localStorage.setItem("songsListArr", JSON.stringify(temp));
   };
   /* Функция, которая меняет значение состояния state.showAddForm */
- 
-  const handleShowAddForm = useCallback(() => {
-    console.log('working')
+
+  const handleShowAddForm = () => {
     setShowAddForm({ showAddForm: true });
-  }, []);
-  const handleHideAddForm = useCallback(() => {
-    console.log('working hide')
+  };
+  const handleHideAddForm = () => {
     setShowAddForm({ showAddForm: false });
-  }, []);
+  };
 
+  /* Добавим новую песню  */
 
+  const addNewSong = (newSong) => {
+    setState((state) => {
+      const temp = [...state.songsListArr];
+      temp.push(newSong);
+      localStorage.setItem("songsListArr", JSON.stringify(temp));
+      return {
+        songsListArr: temp,
+      };
+    });
+  };
 
-    
   /* Методом map проходимся по массиву обьектов песен и выводим список */
 
   const songsList = state.songsListArr.map(
@@ -162,14 +171,34 @@ function Songs() {
     }
   );
 
+  useEffect(() => {
+    axios
+      .get("https://642e96812b883abc6411c655.mockapi.io/api/quiz/songs")
+      .then((res) => {
+        setState({
+          songsListArr: res.data,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
+  if (state.songsListArr.length === 0)
+    return <h1 className=" self-center p-2 m-2">Loading...</h1>;
+
   return (
     <div>
       <div className="songs flex justify-center flex-col items-center">
-        <div className=" border-b-4">
-          <h1 className="text-center   text-white text-2xl p-3 mt-1">
-            Cover event
-          </h1>
-        </div>
+        {state.songsListArr.length === 0 ? (
+          <h1 className="p-2 m-2">Loading...</h1>
+        ) : (
+          <div className=" border-b-4">
+            <h1 className="text-center   text-white text-2xl p-3 mt-1">
+              Cover event
+            </h1>
+          </div>
+        )}
 
         <button
           onClick={handleShowAddForm}
@@ -178,7 +207,13 @@ function Songs() {
           <p className=" font-medium"> Add song </p>
         </button>
 
-        {showAddForm ? <AddForm handleHideAddForm = {() => handleHideAddForm()} /> : null}
+        {showAddForm ? (
+          <AddForm
+            addNewSong={addNewSong}
+            handleHideAddForm={handleHideAddForm}
+            songsListArr={state.songsListArr}
+          />
+        ) : null}
         {songsList}
       </div>
     </div>

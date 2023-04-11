@@ -1,6 +1,6 @@
 import React from "react";
 
-function Header(props) {
+function Header() {
   return (
     <header className="header content-center shadow-2xl bg-gradient-to-r bg-teal-600  flex justify-center align-middle ">
           <nav className="flex flex-row  p-2">

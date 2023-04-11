@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState /* useEffect */ } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 
-function AddForm({ handleHideAddForm }) {
+function AddForm({ handleHideAddForm, songsListArr, addNewSong }) {
   const overlayStyle = {
     position: "fixed",
     top: 0,
@@ -23,33 +23,65 @@ function AddForm({ handleHideAddForm }) {
     borderRadius: "1rem",
     minHeight: "200px",
   };
+
+  const [state, setState] = useState({
+    songTitle: "",
+  });
+
+  const handleSongChange = (e) => {
+    setState({
+      songTitle: e.target.value,
+    });
+  };
+  let createSong = (e) => {
+    const song = {
+      id: songsListArr.length + 1,
+      title: state.songTitle,
+      countSing: 0,
+      countPlay: 0,
+      countLikes: 0,
+      liked: false,
+      singClicked: false,
+      playClicked: false,
+      disLikesClicked: false,
+      countDisLikes: 0,
+    };
+    handleHideAddForm();
+    addNewSong(song);
+  };
+
   return (
     <>
       <form
+        // onSubmit={createSong}
         style={addFormStyle}
-        action=""
         className=" flex flex-col items-center justify-center md:w-2/5  w-3/5 p-1"
+        action=""
       >
         <h1 className=" text- mb-2">Добавить песню</h1>
         <div className=" mx-3 flex justify-center items-center w-5/6">
           <input
-            placeholder="Исполнитель - песня"
+            onChange={handleSongChange}
+            style={{ outline: "none", padding: "1px" }}
+            placeholder=""
+            value={state.songTitle}
             type="text"
             name="songTitle"
-            className=" w-4/5 md:w-2/4 my-3 shadow-lg rounded-lg bg-slate-400 text-cyan-400 focus-within:border-none"
+            autoComplete="off"
+            className=" w-4/5 md:w-2/4 my-3 shadow-lg rounded-lg bg-slate-400 text-slate-800  focus-within:border-none"
           />
         </div>
+
         <button
-          onClick={handleHideAddForm}
+          onClick={createSong}
+          // type="submit"
           className="px-2 py-1 my-3  w-3/4 bg-blue-400 sm:w-1/4 rounded-lg shadow-lg hover:scale-105 ease-in-out duration-150 active:scale-90"
         >
           Add song
         </button>
-        <button
-          onClick={handleHideAddForm}
-          >
+        <button onClick={handleHideAddForm}>
           <AiFillCloseCircle
-          className="cursor-pointer hover: text-gray-400 hover:text-gray-100 hover:scale-110 ease-in-out duration-200 active:scale-75"
+            className="cursor-pointer hover: text-gray-400 hover:text-gray-100 hover:scale-110 ease-in-out duration-200 active:scale-75"
             style={{
               width: "20px",
               height: "20px",
@@ -60,7 +92,11 @@ function AddForm({ handleHideAddForm }) {
           />
         </button>
       </form>
-      <div className="overlay" onClick={handleHideAddForm} style={overlayStyle}></div>
+      <div
+        className="overlay"
+        onClick={handleHideAddForm}
+        style={overlayStyle}
+      ></div>
     </>
   );
 }
